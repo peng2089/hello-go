@@ -1,11 +1,9 @@
 package service
 
-import "hello-go/internal/data"
-
 type Service struct {
-	Data *data.Data
+	As *AuthService
 }
 
-func NewService(data *data.Data) *Service {
-	return &Service{Data: data}
+func NewService(as *AuthService) *Service {
+	return &Service{As: as}
 }

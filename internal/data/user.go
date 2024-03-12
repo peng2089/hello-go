@@ -1,22 +1,32 @@
 package data
 
-type User struct {
-	ID       uint `gorm:"primaryKey"`
-	Nickname string
+import (
+	"context"
+	"hello-go/internal/biz"
+)
+
+type userRepo struct {
+	data *Data
 }
-type UserLocalAuth struct {
-	ID        uint `gorm:"primaryKey"`
-	UserId    uint
-	Username  string
-	Password  string
-	CreatedAt int64 `gorm:"autoCreateTime"`
+
+func NewUserRepo(data *Data) biz.UserRepo {
+	return &userRepo{
+		data: data,
+	}
 }
-type UserOauth struct {
-	ID               uint `gorm:"primaryKey"`
-	UserId           uint
-	OauthName        string
-	OauthId          string
-	OauthAccessToken string
-	OauthExpires     int64
-	CreatedAt        int64 `gorm:"autoCreateTime"`
+
+func (r *userRepo) Create(ctx context.Context, u *biz.User) (*biz.User, error) {
+	if err := r.data.Db.Create(&u).Error; err != nil {
+		return nil, err
+	}
+	return &biz.User{ID: u.ID, Username: u.Username}, nil
+}
+
+func (r *userRepo) FindByUsername(ctx context.Context, username string) (*biz.User, error) {
+	var u biz.User
+	ret := r.data.Db.Where("username = ?", username).First(&u)
+	if ret.Error != nil {
+		return nil, ret.Error
+	}
+	return &u, nil
 }

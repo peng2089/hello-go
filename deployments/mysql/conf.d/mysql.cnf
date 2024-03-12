@@ -1,0 +1,65 @@
+[mysqld]
+# my setting start
+##########################################
+# master-slaver setting (MASTER)
+server-id = 1
+
+## 可选: 0=读写(主机), 1=只读(从机)
+read_only = 0
+
+## 设置需要复制的数据库,默认全部
+# binlog-do-db = test
+#binlog-do-db = gorzt
+#binlog-do-db = record
+
+## 设置不要复制的数据库
+#binlog-ignore-db = test
+#binlog-ignore-db = mysql
+#binlog-ignore-db = sys
+#binlog-ignore-db = information_schema
+#binlog-ignore-db = performance_schema
+##########################################
+# 默认时区 show variables like '%time_zone%';
+# default-time_zone = '-5:00'
+##########################################
+# 设置数据库默认的字符集
+character-set-server=utf8mb4
+# 设置数据库默认的字符序
+collation_server=utf8mb4_general_ci
+##########################################
+
+##########################################
+# 日志
+## 1. binlog日志
+log-bin = binlog
+log-bin-index = binlog.index
+binlog_cache_size = 16M
+# binlog_format = STATEMENT # 设置binlog格式: STATEMENT/RAW/MIXED
+max_binlog_size = 200M ## 控制单个二进制文件的大小, 此参数的最大和默认值是1GB
+## 2. 错误日志
+log-error       = /var/lib/mysql/error.log
+## 3. 通用查询日志, 记录建立的客户端连接用户的所有操作，增上改查等, show variables like '%general%';
+general_log=ON
+general_log_file=/var/lib/mysql/general.log
+## 4. 慢查询
+slow_query_log = ON
+slow_query_log_file = /var/lib/mysql/slow_query.log
+log_queries_not_using_indexes = ON
+log-slow-admin-statements
+long_query_time = 3
+##########################################
+
+# By default we only accept connections from localhost
+#bind-address   = 127.0.0.1
+
+sql_mode=STRICT_TRANS_TABLES,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+# show VARIABLES like '%max_allowed_packet%';
+max_allowed_packet=512M
+# my setting end
+
+[mysql]
+default-character-set=utf8mb4
+
+[mysqldump]
+# mysql服务器端和客户端在一次传送数据包的过程当中最大允许的数据包大小
+max_allowed_packet=512M

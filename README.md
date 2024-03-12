@@ -2,7 +2,13 @@
 
 ## 运行
 ```bash
-$ go run cmd/main.go
+$ docker compose build // 构建镜像
+$ docker compose up -d // 启动
+
+// 注册
+$ curl -v -X POST -d "username=admin&password=123456" http://localhost:8080/auth/register
+// 登录
+$ curl -v -d "username=admin&password=123456" -X POST http://localhost:8080/auth/login
 ```
 
 ## Note

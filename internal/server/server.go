@@ -2,6 +2,7 @@ package server
 
 import (
 	"fmt"
+	"hello-go/internal/biz"
 	"hello-go/internal/data"
 	"hello-go/internal/service"
 
@@ -23,14 +24,18 @@ func (s *Server) Run() error {
 		fmt.Printf("Err: %+v\n", err)
 		return err
 	}
-	data := data.NewData(mysql, nil)
-	service := service.NewService(data)
+	d := data.NewData(mysql, nil)
+	repo := data.NewUserRepo(d)
+	userUsecase := biz.NewUserUsecase(repo)
+	authService := service.NewAuthService(userUsecase)
+	service := service.NewService(authService)
+
 	auth := s.Engine.Group("/auth")
 	{
-		//curl -v -X POST -d "username=admin&password=123456" http://localhost:8080/auth/login
-		auth.POST("/login", service.Login)
+		// curl -v -d "username=admin&password=123456" -X POST http://localhost:8080/auth/login
+		auth.POST("/login", service.As.Login)
 		// curl -v -X POST -d "username=admin&password=123456" http://localhost:8080/auth/register
-		auth.POST("/register", service.Register)
+		auth.POST("/register", service.As.Register)
 	}
 	return s.Engine.Run(":8080")
 }
