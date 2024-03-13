@@ -24,6 +24,7 @@ type LoginReq struct {
 type LoginResp struct {
 	ID       uint   `json:"id"`
 	Username string `json:"username"`
+	Token    string `json:"token"`
 }
 
 // Login: 登录
@@ -42,12 +43,21 @@ func (s *AuthService) Login(ctx *gin.Context) {
 		ctx.JSON(http.StatusOK, gin.H{
 			"message": "用户不存在",
 		})
+		return
 	}
 
+	token, err := s.uc.GenerateToken(ctx, u)
+	if err != nil {
+		ctx.JSON(http.StatusOK, gin.H{
+			"message": "token生成失败" + err.Error(),
+		})
+		return
+	}
 	ctx.JSON(http.StatusOK, gin.H{
 		"data": &LoginResp{
 			ID:       u.ID,
 			Username: u.Username,
+			Token:    token,
 		},
 	})
 }

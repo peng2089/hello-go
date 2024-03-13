@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"hello-go/internal/biz"
 	"hello-go/internal/data"
+	"hello-go/internal/pkg/middleware"
 	"hello-go/internal/service"
 
 	"github.com/gin-gonic/gin"
@@ -28,7 +29,8 @@ func (s *Server) Run() error {
 	repo := data.NewUserRepo(d)
 	userUsecase := biz.NewUserUsecase(repo)
 	authService := service.NewAuthService(userUsecase)
-	service := service.NewService(authService)
+	userService := service.NewUserService(userUsecase)
+	service := service.NewService(authService, userService)
 
 	auth := s.Engine.Group("/auth")
 	{
@@ -36,6 +38,10 @@ func (s *Server) Run() error {
 		auth.POST("/login", service.As.Login)
 		// curl -v -X POST -d "username=admin&password=123456" http://localhost:8080/auth/register
 		auth.POST("/register", service.As.Register)
+	}
+	user := s.Engine.Group("/user", middleware.TokenMiddleware(userUsecase))
+	{
+		user.GET("/info", service.Us.Info)
 	}
 	return s.Engine.Run(":8080")
 }

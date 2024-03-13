@@ -238,6 +238,9 @@ CREATE TABLE IF NOT EXISTS `pma__userconfig` (
   COMMENT='User preferences storage for phpMyAdmin'
   DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
 
+INSERT INTO `pma__userconfig` (`username`, `timevalue`, `config_data`) VALUES
+('root', '2024-03-13 01:06:34', '{\"NavigationTreeDisplayItemFilterMinimum\":200,\"NavigationWidth\":364,\"Console\\/Mode\":\"collapse\",\"FirstDayOfCalendar\":1,\"Server\\/hide_db\":\"information_schema|mysql|performance_schema|phpmyadmin|sys\",\"2fa\":{\"backend\":\"\",\"settings\":[],\"type\":\"db\"},\"lang\":\"zh_CN\"}');
+
 -- --------------------------------------------------------
 
 --
@@ -353,3 +356,9 @@ CREATE TABLE IF NOT EXISTS `pma__export_templates` (
 )
   COMMENT='Saved export templates'
   DEFAULT CHARACTER SET utf8 COLLATE utf8_bin;
+
+
+-- 添加账号 start --
+CREATE USER 'pma'@'%' IDENTIFIED BY 'r=PYdKnH)1%2bGIr';
+GRANT ALL PRIVILEGES ON `phpmyadmin`.* TO 'pma'@'%' WITH GRANT OPTION;
+-- 添加账号 end --
