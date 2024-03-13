@@ -4,10 +4,20 @@ import (
 	"fmt"
 
 	"github.com/redis/go-redis/v9"
+	"github.com/spf13/viper"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/schema"
 )
+
+func init() {
+	viper.SetConfigType("yaml")
+	viper.AddConfigPath("./config")
+	err := viper.ReadInConfig()
+	if err != nil {
+		panic(fmt.Errorf("fatal error config file: %w", err))
+	}
+}
 
 type Data struct {
 	Db    *gorm.DB
@@ -17,7 +27,7 @@ type Data struct {
 // NewMysql
 func NewMysql() (*gorm.DB, error) {
 	db, err := gorm.Open(mysql.New(mysql.Config{
-		DSN: "root:123456@tcp(localhost:3306)/demo?charset=utf8mb4&parseTime=True&loc=Local",
+		DSN: viper.Get("database.mysql.dsn").(string),
 	}), &gorm.Config{
 		NamingStrategy: schema.NamingStrategy{
 			TablePrefix:   "tbl_", // 表名前缀
@@ -33,9 +43,9 @@ func NewMysql() (*gorm.DB, error) {
 // NewRedis
 func NewRedis() *redis.Client {
 	client := redis.NewClient(&redis.Options{
-		Addr:     "localhost:6379",
-		Password: "", // no password set
-		DB:       0,  // use default DB
+		Addr:     viper.Get("database.redis.addr").(string),
+		Password: viper.Get("database.redis.password").(string), // no password set
+		DB:       viper.Get("database.redis.db").(int),          // use default DB
 	})
 	return client
 }

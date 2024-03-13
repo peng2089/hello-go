@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"hello-go/internal/biz"
 	"net/http"
 
@@ -37,7 +36,7 @@ func (s *AuthService) Login(ctx *gin.Context) {
 		})
 		return
 	}
-	fmt.Printf("req: %+v\n", req)
+	// fmt.Printf("req: %+v\n", req)
 	u, err := s.uc.Login(ctx, &biz.User{Username: req.Username, Password: req.Password})
 	if err != nil {
 		ctx.JSON(http.StatusOK, gin.H{
